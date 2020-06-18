@@ -14,28 +14,6 @@ pipeline {
                         values 'firefox', 'chrome', 'safari', 'edge'
                     }
                 }
-                excludes {
-                    exclude {
-                        axis {
-                            name 'PLATFORM'
-                            values 'linux'
-                        }
-                        axis {
-                            name 'BROWSER'
-                            values 'safari'
-                        }
-                    }
-                    exclude {
-                        axis {
-                            name 'PLATFORM'
-                            notValues 'windows'
-                        }
-                        axis {
-                            name 'BROWSER'
-                            values 'edge'
-                        }
-                    }
-                }
                 stages {
                     stage('Build') {
                         steps {
