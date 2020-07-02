@@ -1,32 +1,17 @@
-pipeline {
-    agent none
-    stages {
-        stage('BuildAndTest') {
-            matrix {
-                agent any
-                axes {
-                    axis {
-                        name 'PLATFORM'
-                        values 'linux', 'windows', 'mac'
-                    }
-                    axis {
-                        name 'BROWSER'
-                        values 'firefox', 'chrome', 'safari', 'edge'
-                    }
-                }
-                stages {
-                    stage('Build') {
-                        steps {
-                            echo "Do Build for ${PLATFORM} - ${BROWSER}"
-                        }
-                    }
-                    stage('Test') {
-                        steps {
-                            echo "Do Test for ${PLATFORM} - ${BROWSER}"
-                        }
-                    }
-                }
-            }
-        }
+node {
+    stage 'Preparing VirtualEnv'
+    if (!fileExists('.env')){
+        echo 'Creating virtualenv ...'
+        sh 'virtualenv --no-site-packages .env'
     }
+    sh '. .env/bin/activate'
+    sh 'ls -all'
+   sh """
+. .env/bin/activate
+if [[ -f requirements/preinstall.txt ]]; then
+    pip install -r requirements/preinstall.txt
+fi
+pip install -r requirements/test.txt
+./manage.py test --noinput
+"""
 }
